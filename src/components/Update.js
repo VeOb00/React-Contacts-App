@@ -3,10 +3,10 @@ import Box from "@mui/material/Box";
 import { useEffect, useState } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
-import styles from "./Update.module.css";
 import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
+import CustomButtonGroup from "./UI Components/CustomButtonBroup";
 
 const Update = () => {
 	const navigate = useNavigate();
@@ -14,7 +14,7 @@ const Update = () => {
 	const [lastName, setLastName] = useState("");
 	const [company, setCompany] = useState("");
 	const [avatar, setAvatar] = useState("");
-	const [country, setCountry] = useState("Austria");
+	const [country, setCountry] = useState("");
 	const [street, setStreet] = useState("");
 	const [street2, setStreet2] = useState("");
 	const [zipCode, setZipCode] = useState("");
@@ -24,6 +24,9 @@ const Update = () => {
 
 	useEffect(() => {
 		axios.get(`https://restcountries.com/v3.1/all`).then((response) => {
+			response.data.sort((a, b) =>
+				a.name.common.localeCompare(b.name.common)
+			);
 			setApiCountriesData(response.data);
 		});
 	}, []);
@@ -83,8 +86,12 @@ const Update = () => {
 	return (
 		<Box
 			sx={{
-				"& .MuiTextField-root": { m: 1, width: "25ch" },
-				width: "60%",
+				width: "100%",
+				"& .MuiTextField-root": {
+					m: 1,
+					width: "100%",
+					maxWidth: "300px",
+				},
 			}}
 			component="form"
 			noValidate
@@ -182,7 +189,7 @@ const Update = () => {
 					/>
 				</div>
 			</div>
-			<div className={styles.ButtonGroup}>
+			<CustomButtonGroup>
 				<Button type="submit" variant="contained" disableElevation>
 					Update Contact
 				</Button>
@@ -190,7 +197,7 @@ const Update = () => {
 					type="link"
 					variant="outlined"
 					disableElevation
-					href="./read"
+					href="/"
 				>
 					Cancel
 				</Button>
@@ -203,7 +210,7 @@ const Update = () => {
 				>
 					Delete
 				</Button>
-			</div>
+			</CustomButtonGroup>
 		</Box>
 	);
 };

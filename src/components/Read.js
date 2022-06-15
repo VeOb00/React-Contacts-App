@@ -20,6 +20,9 @@ const Read = () => {
 		axios
 			.get(`https://62a853a9a89585c17711aa83.mockapi.io/api/v1/contacts`)
 			.then((response) => {
+				response.data.sort((a, b) =>
+					a.firstName.localeCompare(b.firstName)
+				);
 				setAPIData(response.data);
 			});
 	}, []);
@@ -42,82 +45,81 @@ const Read = () => {
 		<Box
 			sx={{ width: "100%", maxWidth: 1200, bgcolor: "background.paper" }}
 		>
-			<nav aria-label="main mailbox folders">
-				<List>
-					{APIData.map((data) => {
-						return (
-							<Fragment key={data.id}>
-								<ListItem disablePadding>
-									<ListItemButton>
-										<ListItemAvatar>
-											<Avatar
-												alt={data.lastName}
-												src={data.avatar}
-											/>
-										</ListItemAvatar>
-										<ListItemText
-											primary={
-												!data.firstName &&
+			<List>
+				{APIData.map((data) => {
+					return (
+						<Fragment key={data.id}>
+							<ListItem disablePadding>
+								<ListItemButton>
+									<ListItemAvatar>
+										<Avatar
+											alt={data.lastName}
+											src={data.avatar}
+										/>
+									</ListItemAvatar>
+									<ListItemText
+										sx={{ width: "50%" }}
+										primary={
+											!data.firstName && !data.lastName
+												? data.companyName
+												: `${data.firstName} ${data.lastName}`
+										}
+										secondary={
+											<Typography
+												sx={{
+													display: "block",
+												}}
+												component="span"
+												variant="body2"
+												color="text.primary"
+											>
+												{!data.firstName &&
 												!data.lastName
-													? data.companyName
-													: `${data.firstName} ${data.lastName}`
-											}
-											secondary={
+													? " "
+													: data.companyName}
+											</Typography>
+										}
+									/>
+									<ListItemText
+										sx={{ width: "50%" }}
+										primary={
+											data.address.strAddressLn2
+												? `${data.address.strAddress}, ${data.address.strAddressLn2}`
+												: data.address.strAddress
+										}
+										secondary={
+											<Fragment>
 												<Typography
 													sx={{
-														display: "inline",
+														display: "block",
 													}}
 													component="span"
 													variant="body2"
 													color="text.primary"
 												>
-													{!data.firstName &&
-													!data.lastName
-														? " "
-														: data.companyName}
+													{`${data.address.postcode}, ${data.address.city}`}
 												</Typography>
-											}
-										/>
-										<ListItemText
-											primary={
-												data.address.strAddressLn2
-													? `${data.address.strAddress}, ${data.address.strAddressLn2}`
-													: data.address.strAddress
-											}
-											secondary={
-												<Fragment>
-													<Typography
-														sx={{
-															display: "block",
-														}}
-														component="span"
-														variant="body2"
-														color="text.primary"
-													>
-														{`${data.address.postcode}, ${data.address.city}`}
-													</Typography>
-													{data.address.country}
-												</Fragment>
-											}
-										/>
-									</ListItemButton>
-									<Link to="/update">
-										<IconButton
-											color="primary"
-											aria-label="edit"
-											component="span"
-											onClick={() => setData(data)}
-										>
-											<EditIcon />
-										</IconButton>
-									</Link>
-								</ListItem>
-								<Divider />
-							</Fragment>
-						);
-					})}
-				</List>
-			</nav>
+												{data.address.country}
+											</Fragment>
+										}
+									/>
+								</ListItemButton>
+								<Link to="/update" title="Edit contact">
+									<IconButton
+										color="primary"
+										aria-label="edit"
+										component="span"
+										onClick={() => setData(data)}
+									>
+										<EditIcon />
+									</IconButton>
+								</Link>
+							</ListItem>
+							<Divider />
+						</Fragment>
+					);
+				})}
+			</List>
 		</Box>
 	);
 };

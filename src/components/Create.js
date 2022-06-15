@@ -3,13 +3,13 @@ import Box from "@mui/material/Box";
 import { useState, useEffect } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
-
 // import { styled } from "@mui/material/styles";
 // import FileUpload from "@mui/icons-material/FileUpload";
 // import IconButton from "@mui/material/IconButton";
 
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import CustomButtonGroup from "./UI Components/CustomButtonBroup";
 
 const Create = () => {
 	const navigate = useNavigate();
@@ -17,7 +17,7 @@ const Create = () => {
 	const [lastName, setLastName] = useState("");
 	const [company, setCompany] = useState("");
 	const [avatar, setAvatar] = useState("");
-	const [country, setCountry] = useState("Austria");
+	const [country, setCountry] = useState("");
 	const [street, setStreet] = useState("");
 	const [street2, setStreet2] = useState("");
 	const [zipCode, setZipCode] = useState("");
@@ -46,6 +46,9 @@ const Create = () => {
 
 	useEffect(() => {
 		axios.get(`https://restcountries.com/v3.1/all`).then((response) => {
+			response.data.sort((a, b) =>
+				a.name.common.localeCompare(b.name.common)
+			);
 			setApiCountriesData(response.data);
 		});
 	}, []);
@@ -76,11 +79,14 @@ const Create = () => {
 	return (
 		<Box
 			sx={{
-				"& .MuiTextField-root": { m: 1, width: "25ch" },
-				width: "60%",
+				width: "100%",
+				"& .MuiTextField-root": {
+					m: 1,
+					width: "100%",
+					maxWidth: "300px",
+				},
 			}}
 			component="form"
-			noValidate
 			autoComplete="off"
 			onSubmit={postData}
 		>
@@ -191,7 +197,7 @@ const Create = () => {
 					/>
 				</div>
 			</div>
-			<div>
+			<CustomButtonGroup>
 				<Button type="submit" variant="contained" disableElevation>
 					Add Contact
 				</Button>
@@ -199,11 +205,11 @@ const Create = () => {
 					type="button"
 					variant="outlined"
 					disableElevation
-					href="/read"
+					href="/"
 				>
 					Cancel
 				</Button>
-			</div>
+			</CustomButtonGroup>
 		</Box>
 	);
 };
