@@ -4,9 +4,15 @@ import { useEffect, useState } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
+import Snackbar from "@mui/material/Snackbar";
+import * as React from "react";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 
 import axios from "axios";
 import CustomButtonGroup from "./UI Components/CustomButtonBroup";
+
+let message;
 
 const Update = () => {
 	const navigate = useNavigate();
@@ -21,6 +27,7 @@ const Update = () => {
 	const [city, setCity] = useState("");
 	const [id, setID] = useState(null);
 	const [APICountriesData, setApiCountriesData] = useState([]);
+	const [open, snackbarOpen] = useState(false);
 
 	useEffect(() => {
 		axios.get(`https://restcountries.com/v3.1/all`).then((response) => {
@@ -59,6 +66,27 @@ const Update = () => {
 		},
 	};
 
+	const handleClose = (event, reason) => {
+		if (reason === "clickaway") {
+			return;
+		}
+
+		snackbarOpen(false);
+	};
+
+	const action = (
+		<React.Fragment>
+			<IconButton
+				size="small"
+				aria-label="close"
+				color="inherit"
+				onClick={handleClose}
+			>
+				<CloseIcon fontSize="small" />
+			</IconButton>
+		</React.Fragment>
+	);
+
 	const updateAPIData = (event) => {
 		event.preventDefault();
 		axios
@@ -68,7 +96,11 @@ const Update = () => {
 				ContactAPI
 			)
 			.then(() => {
-				navigate("/read");
+				message = "Contact updated!";
+				snackbarOpen(true);
+				setTimeout(() => {
+					navigate("/read");
+				}, 1000);
 			});
 	};
 
@@ -79,7 +111,11 @@ const Update = () => {
 					id
 			)
 			.then(() => {
-				navigate("/read");
+				message = "Contact deleted!";
+				snackbarOpen(true);
+				setTimeout(() => {
+					navigate("/read");
+				}, 1000);
 			});
 	};
 
@@ -94,10 +130,16 @@ const Update = () => {
 				},
 			}}
 			component="form"
-			noValidate
 			autoComplete="off"
 			onSubmit={updateAPIData}
 		>
+			<Snackbar
+				open={open}
+				autoHideDuration={6000}
+				onClose={handleClose}
+				message={message}
+				action={action}
+			/>
 			<div>
 				<div>
 					<TextField
